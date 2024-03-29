@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logintest/pages/LoginPhone.dart';
 import 'package:logintest/pages/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPhonePage(), //AuthPage()가 기본
+      home: AuthPage(), //AuthPage()가 기본
     );
   }
 }

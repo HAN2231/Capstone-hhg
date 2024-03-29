@@ -9,7 +9,7 @@ class LoginOrRegisterPage extends StatefulWidget {
   State<LoginOrRegisterPage> createState() => _LoginOrRegisterPageState();
 }
 
-class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> {
+class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> { //토글 페이지(StatefulWidget)
   //initially show login page
   bool showLoginPage = true;
 
