@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,6 +20,19 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final ageController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    ageController.dispose();
+  }
 
   // sign creating the user
   void signUserUp() async {
@@ -37,13 +51,22 @@ class _RegisterPageState extends State<RegisterPage> {
       // check if password is confirmed
       if (passwordController.text == confirmPasswordController.text) {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        // add user details
+        addUserDetails(
+          firstNameController.text.trim(),
+          lastNameController.text.trim(),
+          emailController.text.trim(),
+          int.parse(ageController.text.trim()),
         );
       } else {
         // show error message, passwords don't match'
         showErrorMessage("Passwords don't match");
       }
+
       // pop the loading circle
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -52,6 +75,15 @@ class _RegisterPageState extends State<RegisterPage> {
       // show error message
       showErrorMessage(e.code);
     }
+  }
+
+  Future addUserDetails(String firstName, String lastName, String email, int age ) async {
+    await FirebaseFirestore.instance.collection('users').add({
+      'first name': firstName,
+      'last name': lastName,
+      'email': email,
+      'age': age,
+    });
   }
 
   // wrong message to user
@@ -82,13 +114,13 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                const SizedBox(height: 25),
+            //    const SizedBox(height: 25),
 
             // logo
-            const Icon(
-              Icons.lock,
-              size: 50,
-            ),
+            //const Icon(
+            //  Icons.lock,
+            //  size: 50,
+            //),
 
             const SizedBox(height: 25),
 
@@ -126,6 +158,32 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: confirmPasswordController,
               hintText: 'Confirm Password',
               obscureText: true,
+            ),
+
+            const SizedBox(height: 10),
+
+            // confirm password textfield
+            MyTextField(
+              controller: firstNameController,
+              hintText: 'First Name',
+              obscureText: false,
+            ),
+            const SizedBox(height: 10),
+
+            // confirm password textfield
+            MyTextField(
+              controller: lastNameController,
+              hintText: 'Last Name',
+              obscureText: false,
+            ),
+
+            const SizedBox(height: 10),
+
+            // confirm password textfield
+            MyTextField(
+              controller: ageController,
+              hintText: 'Age',
+              obscureText: false,
             ),
 
             const SizedBox(height: 25),
@@ -166,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 25),
 
             // google + apple sign in buttons
             Row(
@@ -187,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 25),
 
             // not a member? register now
             Row(
