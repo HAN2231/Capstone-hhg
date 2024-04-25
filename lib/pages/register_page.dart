@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
+    super.dispose();
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
@@ -35,6 +38,16 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // sign creating the user
+  Future<void> addUserDetails(String uid, String firstName, String lastName, String email, int age ) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'uid' : uid,
+      'first name': firstName,
+      'last name': lastName,
+      'email': email,
+      'age': age,
+    });
+  }
+
   void signUserUp() async {
     // show loading circle
     showDialog(
@@ -46,17 +59,18 @@ class _RegisterPageState extends State<RegisterPage> {
       },
     );
 
-    // try sign up
     try {
-      // check if password is confirmed
       if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
 
-        // add user details
+
+
+        // 사용자 정보 추가 시 uid 사용
         addUserDetails(
+          userCredential.user!.uid,
           firstNameController.text.trim(),
           lastNameController.text.trim(),
           emailController.text.trim(),
@@ -75,15 +89,6 @@ class _RegisterPageState extends State<RegisterPage> {
       // show error message
       showErrorMessage(e.code);
     }
-  }
-
-  Future addUserDetails(String firstName, String lastName, String email, int age ) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'first name': firstName,
-      'last name': lastName,
-      'email': email,
-      'age': age,
-    });
   }
 
   // wrong message to user

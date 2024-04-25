@@ -40,7 +40,14 @@ dependencies:
   firebase_auth: ^4.17.9
   google_sign_in: ^6.2.1
   cloud_firestore: ^4.16.1
+<<<<<<< HEAD
   curved_labeled_navigation_bar: ^2.0.2
+  modal_progress_hud_nsn: ^0.5.1
+  fluttertoast: ^8.2.5
+  flutter_svg: ^2.0.10+1
+
+=======
+>>>>>>> parent of 9ce337d (add navigator bar)
 
 dev_dependencies:
   flutter_test:

@@ -1,43 +1,45 @@
 {
   "project_info": {
-    "project_number": "715360945619",
-    "project_id": "logiclegends-81f71",
-    "storage_bucket": "logiclegends-81f71.appspot.com"
+    "project_number": "929179227423",
+    "project_id": "seng-c94ca",
+    "storage_bucket": "seng-c94ca.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:715360945619:android:b6e9dc9cd1e66e6d8fdb26",
+        "mobilesdk_app_id": "1:929179227423:android:c6472589c65e32ad8c0c2a",
         "android_client_info": {
           "package_name": "com.example.logintest"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "715360945619-h8frj1tck77oj4c14tmbm60a552mg6vp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCJFiQox7dVKDNgNgpT_VkUMtzeaaeUMWQ"
+          "current_key": "AIzaSyBayTSx3oKg_hMNslP0Go4awUc-txZDHfI"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "715360945619-h8frj1tck77oj4c14tmbm60a552mg6vp.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "715360945619-f8ngpvtq8kotsaen83hsjml956rqne0h.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.logintest"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929179227423:android:2a7029ead4bad6428c0c2a",
+        "android_client_info": {
+          "package_name": "com.example.seng"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBayTSx3oKg_hMNslP0Go4awUc-txZDHfI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }
