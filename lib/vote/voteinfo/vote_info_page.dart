@@ -6,13 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import '../bottom_chat_page.dart';
-import '../chat/chat_page.dart';
-import '../chat/chat_service.dart';
-import '../check_voter_page.dart';
-import '../premium/off_premium_page.dart';
-import '../secret_vote_page.dart';
+import 'package:shimmer/shimmer.dart';
+import 'bottom_chat_page.dart';
+import '../../chat/chat_page.dart';
+import '../../chat/chat_service.dart';
+import 'check_voter_page.dart';
+import '../../premium/off_premium_page.dart';
+import 'secret_vote_page.dart';
 
 class VoteInfoPage extends StatelessWidget {
   final String voteId; // 추가된 voteId
@@ -54,12 +54,23 @@ class VoteInfoPage extends StatelessWidget {
       future: _getUserDataByFirstname(firstname),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              width: 100.w,
+              height: 100.h,
+            ),
+          );
         }
         final userData = snapshot.data!;
         final userName = userData['firstname'];
-        final major = userData['major'] ?? 'No major';
-        final gender = userData['gender'] ?? 'No gender';
+        final major = userData['major'] ?? '전공 없음';
+        final gender = userData['gender'] ?? '성별 없음';
         final imagePath = gender == '남자' ? 'assets/men.png' : 'assets/female.png';
 
         final backgroundColor = userName == currentUserFirstName ? tileColor : Colors.grey[100];
@@ -146,6 +157,7 @@ class VoteInfoPage extends StatelessWidget {
       }
     }
   }
+
   void _navigateToSubscriptionPage(BuildContext context, bool secretMode) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -162,7 +174,7 @@ class VoteInfoPage extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 height: 420,
-                child: secretMode ? SecretVotePage(greeting: greeting) : CheckVoterPage(voterId: voterId),
+                child: secretMode ? SecretVotePage() : CheckVoterPage(voterId: voterId),
               ),
             );
           },
@@ -182,7 +194,6 @@ class VoteInfoPage extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,13 +209,14 @@ class VoteInfoPage extends StatelessWidget {
                 .get(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(color: Colors.white);
+                return Container(color: Colors.white,
+                );
               }
               if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}', style: TextStyle(fontSize: 16.sp));
+                return Text('오류: ${snapshot.error}', style: TextStyle(fontSize: 16.sp));
               }
               if (!snapshot.hasData || !snapshot.data!.exists) {
-                return Text('Cannot find user information.', style: TextStyle(fontSize: 16.sp));
+                return Text('사용자 정보를 찾을 수 없습니다.', style: TextStyle(fontSize: 16.sp));
               }
 
               final userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -219,26 +231,28 @@ class VoteInfoPage extends StatelessWidget {
                     .snapshots(),
                 builder: (context, voteSnapshot) {
                   if (voteSnapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Container(color: Colors.white,
+                    );
                   }
                   if (voteSnapshot.hasError) {
-                    return Text('Error: ${voteSnapshot.error}', style: TextStyle(fontSize: 16.sp));
+                    return Text('오류: ${voteSnapshot.error}', style: TextStyle(fontSize: 16.sp));
                   }
                   if (voteSnapshot.data == null || voteSnapshot.data!.docs.isEmpty) {
-                    return Text('No votes received.', style: TextStyle(fontSize: 16.sp));
+                    return Text('받은 투표가 없습니다.', style: TextStyle(fontSize: 16.sp));
                   }
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance.collection('votes').doc(voteId).get(),
                     builder: (context, voteDetailSnapshot) {
                       if (voteDetailSnapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return Container(color: Colors.white,
+                        );
                       }
                       if (voteDetailSnapshot.hasError) {
-                        return Text('Error: ${voteDetailSnapshot.error}', style: TextStyle(fontSize: 16.sp));
+                        return Text('오류: ${voteDetailSnapshot.error}', style: TextStyle(fontSize: 16.sp));
                       }
                       if (!voteDetailSnapshot.hasData || !voteDetailSnapshot.data!.exists) {
-                        return Text('Cannot find vote information.', style: TextStyle(fontSize: 16.sp));
+                        return Text('투표 정보를 찾을 수 없습니다.', style: TextStyle(fontSize: 16.sp));
                       }
 
                       final voteData = voteDetailSnapshot.data!.data() as Map<String, dynamic>;
@@ -248,19 +262,20 @@ class VoteInfoPage extends StatelessWidget {
                         future: FirebaseFirestore.instance.collection('users').doc(voterId).get(),
                         builder: (context, voterSnapshot) {
                           if (voterSnapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return Container(color: Colors.white,
+                            );
                           }
                           if (voterSnapshot.hasError) {
-                            return Text('Error: ${voterSnapshot.error}', style: TextStyle(fontSize: 16.sp));
+                            return Text('오류: ${voterSnapshot.error}', style: TextStyle(fontSize: 16.sp));
                           }
                           if (!voterSnapshot.hasData || !voterSnapshot.data!.exists) {
-                            return Text('Cannot find voter information.', style: TextStyle(fontSize: 16.sp));
+                            return Text('투표자 정보를 찾을 수 없습니다.', style: TextStyle(fontSize: 16.sp));
                           }
 
                           final voterData = voterSnapshot.data!.data() as Map<String, dynamic>;
-                          final hint1 = voterData['userhint1'] ?? 'No hint';
-                          final hint2 = voterData['userhint2'] ?? 'No hint';
-                          final hint3 = voterData['userhint3'] ?? 'No hint';
+                          final hint1 = voterData['userhint1'] ?? '힌트 없음';
+                          final hint2 = voterData['userhint2'] ?? '힌트 없음';
+                          final hint3 = voterData['userhint3'] ?? '힌트 없음';
                           final major = voterData['major'] ?? '';
 
                           final voteBackgroundColor = Color(int.parse(votebackground));

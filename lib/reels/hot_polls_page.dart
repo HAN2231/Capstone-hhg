@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logintest/pages/hot_page.dart';
+import 'package:logintest/reels/hot_page.dart';
 
 class HotPollsPage extends StatelessWidget {
   const HotPollsPage({Key? key}) : super(key: key);
@@ -66,7 +66,23 @@ class HotPollsPage extends StatelessWidget {
               final vote1Count = post['vote_1_count'];
               final vote2Count = post['vote_2_count'];
               final totalVotes = vote1Count + vote2Count;
-              final timestamp = post['timestamp'] as Timestamp;
+              final postTime = post['timestamp'].toDate();
+              final now = DateTime.now();
+              final difference = now.difference(postTime);
+              String timeAgoMessage = '';
+
+              if (difference.inSeconds < 60) {
+                timeAgoMessage = '${difference.inSeconds}초 전';
+              } else if (difference.inMinutes < 60) {
+                timeAgoMessage = '${difference.inMinutes}분 전';
+              } else if (difference.inHours < 24) {
+                timeAgoMessage = '${difference.inHours}시간 전';
+              } else if (difference.inDays < 7) {
+                timeAgoMessage = '${difference.inDays}일 전';
+              } else {
+                int weeks = (difference.inDays / 7).floor();
+                timeAgoMessage = '$weeks주일 전';
+              }
 
               return Card(
                 color: Colors.white,
@@ -82,7 +98,13 @@ class HotPollsPage extends StatelessWidget {
                   )
                       : null,
                   title: Text(caption, style: const TextStyle(fontSize: 18)),
-                  subtitle: Text('Total votes: $totalVotes'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Total votes: $totalVotes'),
+                      Text(timeAgoMessage)
+                    ],
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

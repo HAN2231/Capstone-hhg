@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'chat/chat_page.dart';
+import '../../chat/chat_page.dart';
 
 class ChatBottomPage extends StatefulWidget {
   final String receiverEmail;
@@ -33,7 +33,6 @@ class ChatBottomPage extends StatefulWidget {
 }
 
 class _ChatBottomPageState extends State<ChatBottomPage> with SingleTickerProviderStateMixin {
-  late Future<DocumentSnapshot> _userFuture;
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool _isAnimating = false;
@@ -42,10 +41,7 @@ class _ChatBottomPageState extends State<ChatBottomPage> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _userFuture = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    _points = widget.currentPoints; // 초기 포인트 값을 설정합니다.
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
@@ -91,81 +87,46 @@ class _ChatBottomPageState extends State<ChatBottomPage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: _userFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(fontSize: 16.sp)));
-        }
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Center(child: Text('Cannot find user information.', style: TextStyle(fontSize: 16.sp)));
-        }
-
-        _points = widget.currentPoints;
-
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '채팅을 시작하시겠습니까?',
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
+            ),
+            SizedBox(height: 10.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '채팅을 시작하시겠습니까?',
-                  style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w700),
+                  '대화 시작 시 ',
+                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: 10.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '채팅방 생성 시 ',
-                      style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w700),
-                    ),
-                    Image.asset(
-                      'assets/juicy-gold-coin.png', // coin 이미지 경로
-                      width: 24.w,
-                      height: 24.h,
-                    ),
-                    Text(
-                      '100 차감 됩니다.',
-                      style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
-                    ),
-                  ],
+                Image.asset(
+                  'assets/juicy-gold-coin.png', // coin 이미지 경로
+                  width: 24.w,
+                  height: 24.h,
                 ),
-                SizedBox(height: 20.h),
-                _isAnimating
-                    ? AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '현재 나의 ',
-                          style: TextStyle(fontSize: 18.sp, color: Colors.black),
-                        ),
-                        Image.asset(
-                          'assets/juicy-gold-coin.png', // coin 이미지 경로
-                          width: 24.w,
-                          height: 24.h,
-                        ),
-                        Text(
-                          ' : ${(_points - (100 * _animation.value)).toInt()}',
-                          style: TextStyle(fontSize: 18.sp, color: Colors.black),
-                        ),
-                      ],
-                    );
-                  },
-                )
-                    : Row(
+                Text(
+                  '100 차감 됩니다.',
+                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
+            _isAnimating
+                ? AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -178,49 +139,71 @@ class _ChatBottomPageState extends State<ChatBottomPage> with SingleTickerProvid
                       height: 24.h,
                     ),
                     Text(
-                      ' : $_points',
+                      ' : ${(_points - (100 * _animation.value)).toInt()}',
                       style: TextStyle(fontSize: 18.sp, color: Colors.black),
                     ),
                   ],
+                );
+              },
+            )
+                : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '현재 나의 ',
+                  style: TextStyle(fontSize: 18.sp, color: Colors.black),
                 ),
-                SizedBox(height: 20.h),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_points >= 100) {
-                      _startAnimationAndNavigate();
-                    } else {
-                      // 포인트 부족 안내 메세지
-
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _points >= 100 ? Colors.blue : Colors.grey, // 100 포인트 이상일 때만 파란색
-                    padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 30.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    minimumSize: Size(double.infinity, 40.h),
-                  ),
-                  child: Text(
-                    '채팅하기',
-                    style: TextStyle(fontSize: 18.sp, color: Colors.white),
-                  ),
+                Image.asset(
+                  'assets/juicy-gold-coin.png', // coin 이미지 경로
+                  width: 24.w,
+                  height: 24.h,
                 ),
-                SizedBox(height: 15.h),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    '다음에',
-                    style: TextStyle(fontSize: 13.sp, color: Colors.grey[350]),
-                  ),
+                Text(
+                  ' : $_points',
+                  style: TextStyle(fontSize: 18.sp, color: Colors.black),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            SizedBox(height: 20.h),
+            ElevatedButton(
+              onPressed: () {
+                if (_points >= 100) {
+                  _startAnimationAndNavigate();
+                } else {
+                  // 포인트 부족 안내 메시지 추가
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('포인트가 부족합니다.'),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _points >= 100 ? Colors.blue : Colors.grey, // 100 포인트 이상일 때만 파란색
+                padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 30.w),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                minimumSize: Size(double.infinity, 40.h),
+              ),
+              child: Text(
+                '채팅하기',
+                style: TextStyle(fontSize: 18.sp, color: Colors.white),
+              ),
+            ),
+            SizedBox(height: 15.h),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                '다음에',
+                style: TextStyle(fontSize: 13.sp, color: Colors.grey[350]),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

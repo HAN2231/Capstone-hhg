@@ -6,21 +6,21 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PostUploadPage extends StatefulWidget {
-  const PostUploadPage({Key? key}) : super(key: key);
+class PollsUploadPage extends StatefulWidget {
+  const PollsUploadPage({Key? key}) : super(key: key);
 
   @override
-  _PostUploadPageState createState() => _PostUploadPageState();
+  _PollsUploadPage createState() => _PollsUploadPage();
 }
 
-class _PostUploadPageState extends State<PostUploadPage> {
+class _PollsUploadPage extends State<PollsUploadPage> {
   File? _image;
   final picker = ImagePicker();
   final TextEditingController _captionController = TextEditingController();
   final TextEditingController _vote1Controller = TextEditingController();
   final TextEditingController _vote2Controller = TextEditingController();
   bool _isButtonEnabled = false;
-  final int _postPoints = 50; // 포스트 업로드 시 제공할 포인트
+  final int _postPoints = 30; // 포스트 업로드 시 제공할 포인트
 
   @override
   void initState() {
@@ -105,7 +105,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
     // 포인트 획득 기록을 현재 사용자 문서 아래 points 하위 컬렉션에 저장
     await FirebaseFirestore.instance.collection('users').doc(userId).collection('points').add({
-      'pointsource': 'post',
+      'pointsource': 'polls',
       'points': _postPoints,
       'pointtimestamp': FieldValue.serverTimestamp(),
     });

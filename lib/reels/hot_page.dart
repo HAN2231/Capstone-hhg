@@ -12,7 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logintest/pages/hot_polls_page.dart';
 import 'package:share/share.dart';
 
 class HotPage extends StatefulWidget {

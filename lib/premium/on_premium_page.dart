@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 
 class OnPremiumPage extends StatefulWidget {
   @override
@@ -9,13 +8,11 @@ class OnPremiumPage extends StatefulWidget {
 
 class _OnPremiumPage extends State<OnPremiumPage> {
   late PageController _pageController;
-  int _currentPage = 0;
-  bool _isLoading = false; // 결제 진행 상태를 추적하기 위한 변수
 
   final List<String> descriptions = [
     '투표자 초성 엿보기',
     '포인트 2배',
-    '투표자에게 채팅 하기',
+    '무제한 채팅 하기',
   ];
 
   final List<String> imagePaths = [
@@ -23,6 +20,13 @@ class _OnPremiumPage extends State<OnPremiumPage> {
     'assets/juicy-gold-coin.png',
     'assets/juicy-envelope-with-heart.png',
   ];
+
+  final List<String>  explainations= [
+    '초성을 확인하고 유추해보세요',
+    '더 많은 포인트를 얻어보세요',
+    '채팅 제한 없이 소통 해보세요',
+  ];
+
 
   @override
   void initState() {
@@ -52,102 +56,66 @@ class _OnPremiumPage extends State<OnPremiumPage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Flirt Premium으로',
-                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                Container(
+                  width: 140.w,
+                  height: 140.h,
+                  child: Image.asset("assets/ef.png"),
                 ),
                 Text(
-                  '누가 보냈는지 확인해보세요',
+                  'Flirt Premium 가입을 축하드립니다!',
                   style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 7.h),
+                Text(
+                  '다음의 혜택들을 누려보세요',
+                  style: TextStyle(color: Colors.grey[700], fontSize: 15.sp),
                 ),
               ],
             ),
             SizedBox(height: 10.h),
-            Container(
-              margin: EdgeInsets.only(top: 15),
-              height: 140.h,
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
-                },
-                itemCount: descriptions.length,
-                itemBuilder: (context, index) {
-                  return Column(
+            Column(
+              children: List.generate(imagePaths.length, (index) {
+                return Container(
+                  margin: EdgeInsets.all(15.w),
+                  child: Row(
                     children: [
-                      Image.asset(imagePaths[index], height: 100.h),
-                      SizedBox(height: 10.h),
-                      Text(
-                        descriptions[index],
-                        style: TextStyle(fontSize: 17.sp),
-                        textAlign: TextAlign.center,
+                      Container(
+                        width: 70,
+                        margin: EdgeInsets.only(right: 15.w), // 오른쪽 마진을 추가하여 이미지와 텍스트 사이에 공간을 둠
+                        child: Image.asset(imagePaths[index], height: 40.h),
                       ),
+                       Column(
+                         children: [
+                           Container(
+                              child: Text(
+                                descriptions[index],
+                                style: TextStyle(fontSize: 17.sp,fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left, // 텍스트를 왼쪽 정렬
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                explainations[index],
+                                style: TextStyle(fontSize: 16.sp,color: Colors.grey[600]),
+                                textAlign: TextAlign.left, // 텍스트를 왼쪽 정렬
+                              ),
+                            ),
+                         ],
+                       ),
+
                     ],
-                  );
-                },
-              ),
-            ),
-            Center(
-              child: DotsIndicator(
-                dotsCount: descriptions.length,
-                position: _currentPage.toDouble(),
-                decorator: DotsDecorator(
-                  activeColor: Colors.blue,
-                  size: Size.square(8.0),
-                  activeSize: Size(18.0, 8.0),
-                  activeShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
-            SizedBox(height: 13.h),
-            Text('￦990/이주일', style: TextStyle(fontSize: 23.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 10.h),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _isLoading = true; // 로딩 상태로 변경
-                });
-
-                // 결제 API 호출 또는 기타 결제 로직 수행
-
-                // 결제가 성공적으로 완료되면
-                Future.delayed(Duration(seconds: 2), () {
-                  setState(() {
-                    _isLoading = false; // 로딩 상태 해제
-                  });
-
-                  // 결제 완료 메시지를 보여줄 수 있음
-
-                  // 결제가 완료되었으므로 다른 작업 수행
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 30.w),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                minimumSize: Size(double.infinity, 40.h),
-              ),
-              child: Text(
-                '구독하기',
-                style: TextStyle(fontSize: 18.sp, color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 7.h),
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pop(); // BottomSheet 닫기
               },
               child: Text(
-                '다음에',
-                style: TextStyle(fontSize: 13.sp, color: Colors.grey[350]),
+                '혜택 누리러 가기',
+                style: TextStyle(fontSize: 13.sp, color: Colors.blue, fontWeight: FontWeight.w500),
               ),
             ),
           ],

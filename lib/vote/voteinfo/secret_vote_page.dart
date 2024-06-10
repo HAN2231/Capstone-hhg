@@ -1,48 +1,71 @@
-import 'dart:ui';
-
-import 'package:animated_emoji/emoji.dart';
-import 'package:animated_emoji/emojis.g.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import '../bottom_chat_page.dart';
-import '../chat/chat_page.dart';
-import '../chat/chat_service.dart';
-import '../check_voter_page.dart';
-import '../premium/off_premium_page.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SecretVotePage extends StatelessWidget {
-  final String greeting;
+class SecretVotePage extends StatefulWidget {
+  @override
+  _SecretVotePage createState() => _SecretVotePage();
+}
 
-  const SecretVotePage({Key? key, required this.greeting}) : super(key: key);
+class _SecretVotePage extends State<SecretVotePage> {
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '시크릿 모드 사용자에게 투표 받았습니다.',
-            style: TextStyle(fontSize: 18.sp, color: Colors.black),
-          ),
-          SizedBox(height: 20.h),
-          Text(
-            '인사말: $greeting',
-            style: TextStyle(fontSize: 16.sp, color: Colors.black),
-          ),
-          SizedBox(height: 20.h),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('닫기'),
-          ),
-        ],
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(20.w, 20.w, 20.w, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '시크릿 투표는',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  '상대방을 알 수 없어요',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 5.h,),
+                Text(
+                  'Premium 구독자도 예외는 없습니다.',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+                margin: EdgeInsets.symmetric(vertical: 18.h, horizontal: 90.w),
+                child: Image.asset('assets/juicy-keyhole-shield.png')),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop(); // BottomSheet 닫기
+              },
+              child: Text(
+                '다음에',
+                style: TextStyle(fontSize: 13.sp, color: Colors.grey[350]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

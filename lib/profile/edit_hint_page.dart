@@ -1,23 +1,26 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 
-class ProfileSettingPage extends StatefulWidget {
+class EditHintPage extends StatefulWidget {
   final String hint1;
   final String hint2;
   final String hint3;
 
-  ProfileSettingPage({
+  EditHintPage({
     required this.hint1,
     required this.hint2,
     required this.hint3,
   });
 
   @override
-  _ProfileSettingPageState createState() => _ProfileSettingPageState();
+  _EditHintPage createState() => _EditHintPage();
 }
 
-class _ProfileSettingPageState extends State<ProfileSettingPage> {
+class _EditHintPage extends State<EditHintPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -62,72 +65,132 @@ class _ProfileSettingPageState extends State<ProfileSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('프로필 수정'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '프로필 힌트를 수정하세요',
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+          left: 20,
+          right: 20,
+          top: 20,
+        ),
+        child: Wrap(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
               ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _hint1Controller,
-                decoration: InputDecoration(
-                  labelText: '힌트 1',
-                  prefixIcon: Icon(Icons.lightbulb_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _hint2Controller,
-                decoration: InputDecoration(
-                  labelText: '힌트 2',
-                  prefixIcon: Icon(Icons.lightbulb_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _hint3Controller,
-                decoration: InputDecoration(
-                  labelText: '힌트 3',
-                  prefixIcon: Icon(Icons.lightbulb_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              SizedBox(height: 32.0),
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _updateUserData(context);
-                  },
-                  label: Text('저장',),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '힌트로 나를 표현 해보세요',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                ),
+                  SizedBox(height: 10.0),
+                  Text(
+                    '힌트는 두 자리만 입력 가능해요',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  CupertinoTextField(
+                    padding: EdgeInsets.all(15),
+                    controller: _hint1Controller,
+                    placeholder: '힌트 1',
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    placeholderStyle: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.black),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.extraLightBackgroundGray,
+                      border: Border.all(
+                        color: CupertinoColors.extraLightBackgroundGray,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    cursorColor: CupertinoColors.activeGreen,
+                  ),
+                  SizedBox(height: 16.0),
+                  CupertinoTextField(
+                    padding: EdgeInsets.all(15),
+                    controller: _hint2Controller,
+                    placeholder: '힌트 2',
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    placeholderStyle: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.black),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.extraLightBackgroundGray,
+                      border: Border.all(
+                        color: CupertinoColors.extraLightBackgroundGray,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    cursorColor: CupertinoColors.activeGreen,
+                  ),
+                  SizedBox(height: 16.0),
+                  CupertinoTextField(
+                    padding: EdgeInsets.all(15),
+                    controller: _hint3Controller,
+                    placeholder: '힌트 3',
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    placeholderStyle: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.black),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.extraLightBackgroundGray,
+                      border: Border.all(
+                        color: CupertinoColors.extraLightBackgroundGray,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    cursorColor: CupertinoColors.activeGreen,
+                  ),
+                  SizedBox(height: 25.0),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        _updateUserData(context);
+                      },
+                      label: Text(
+                        '힌트 저장',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 32.0, vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
